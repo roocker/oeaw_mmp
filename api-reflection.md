@@ -1,0 +1,10 @@
+- sprache einheitlichkeit
+- version /api/v1/stelle abwärtskompatibilität
+-  xhttp override put delete not allowed
+-  response total count
+-  error message kommt nicht zurück und keine genaue message die mir hilf
+-  pagination last
+-  caching? cache control
+-  https://en.wikipedia.org/wiki/HATEOAS
+-  https://stackoverflow.blog/2020/03/02/best-practices-for-rest-api-design/
+-  https://smartbear.com/learn/api-design/traits-of-a-good-rest-api/
