@@ -1,3 +1,28 @@
 @tailwind base;
+@layer base {
+  h1,
+  h2 {
+    @apply text-center uppercase;
+  }
+  h1 {
+    @apply text-3xl font-bold;
+  }
+  h2 {
+    @apply text-2xl font-bold my-4;
+  }
+  ul {
+    @apply list-none;
+  }
+  a {
+    @apply text-blue font-bold relative transition-all duration-300;
+    @apply before:absolute before:bottom-[-1em] before:left-0 before:w-0 before:h-3 before:bg-cyan before:transition-all before:duration-300;
+  }
+  a:hover::before {
+    @apply bg-cyan w-full;
+  }
+  table {
+    @apply gap-4;
+  }
+}
 @tailwind components;
 @tailwind utilities;

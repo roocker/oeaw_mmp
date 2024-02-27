@@ -6,7 +6,7 @@ export default {
     extend: {
       colors: {
         cyan: "#59bcc1",
-        blue: "#00142D",
+        blue: "#00122f",
       },
       fontFamily: {
         sans: ["Lato", "sans-serif"],

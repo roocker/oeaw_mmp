@@ -15,10 +15,11 @@ import {
 export const ViewSwitch = (args: SwitchProps) => {
   return (
     <Switch className="group flex gap-2 items-center" {...args}>
+      Listen Ansicht
       <div className="flex h-[26px] w-[44px] shrink-0 cursor-default rounded-full shadow-inner bg-clip-padding border border-solid border-white/30 p-[3px] box-border transition duration-200 ease-in-out bg-cyan group-pressed:bg-cyan group-selected:bg-blue group-selected:group-pressed:bg-blue outline-none group-focus-visible:ring-2 ring-black">
         <span className="h-[18px] w-[18px] transform rounded-full bg-white shadow transition duration-200 ease-in-out translate-x-0 group-selected:translate-x-[100%]" />
       </div>
-      Listen Ansicht - Tabellen Ansicht
+      Tabellen Ansicht
     </Switch>
   );
 };
@@ -34,6 +35,7 @@ export const ColumnFilterList = (
   ];
   return (
     <>
+      <Label>Filter:</Label>
       <ListBox aria-label="Column Filter" items={options} {...args}>
         {(item) => <ListBoxItem>{item.name}</ListBoxItem>}
       </ListBox>
@@ -50,6 +52,7 @@ export const ListLength = (
     { id: 20, name: "20" },
     { id: 50, name: "50" },
     { id: 100, name: "100" },
+    { id: 500, name: "500" },
   ];
   return (
     <Select {...args}>

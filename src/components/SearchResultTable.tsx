@@ -2,36 +2,37 @@ import { ColumnFilterList, ListLength, ViewSwitch } from "./Filter";
 import { MMPResult } from "../types";
 import { Key, Selection } from "react-aria-components";
 import { useEffect } from "react";
+import Pagination from "./Pagination";
 
 interface SearchResultTableProps {
-  results?: {
+  data?: {
     count: number;
     results: Array<MMPResult>;
   };
   error?: string;
   searchTerm?: string;
+  loadStatus: boolean;
   loadTime?: number;
   filterSelectedKeys: Array<string>;
   filterSetSelectedKeys: React.Dispatch<React.SetStateAction<Array<string>>>;
   pageMaxResults: number;
   pageSetMaxResults: React.Dispatch<React.SetStateAction<number>>;
-  // pageSetMaxResults: any;
-  // pageSetMaxResults: React.SetStateAction<number>;
+  currentPage: number;
+  handlePageChange: (page: number | string) => void;
 }
-// filterSetSelectedKeys: React.Dispatch<React.SetStateAction<Array<string>>> => (newKeys) ;
-// filterSetSelectedKeys: (value: React.SetStateAction<string[]>) => void;
-// pageSetMaxResults: (keys: Key) => void;
-// pageSetMaxResults: (keys: React.SetStateAction<number>) => void;
 
 export default function SearchResultTable({
-  results,
+  data,
   error,
   searchTerm,
+  loadStatus,
   loadTime,
   filterSelectedKeys: filterKeys,
   filterSetSelectedKeys,
   pageMaxResults,
   pageSetMaxResults,
+  currentPage,
+  handlePageChange,
 }: SearchResultTableProps) {
   const handleFilterChange = (sel: Selection) => {
     filterSetSelectedKeys(Array.from(sel as string));
@@ -43,23 +44,38 @@ export default function SearchResultTable({
     return `https://mmp.acdh-dev.oeaw.ac.at/archiv/stelle/detail/${id}`;
   };
 
+  /* const data = useMemo(() => {
+    const firstPageIndex = (currentPage - 1) * pageMaxResults;
+    const lastPageIndex = firstPageIndex + pageMaxResults;
+    return results.slice(firstPageIndex, lastPageIndex);
+  }, [currentPage, results]); */
+
   useEffect(() => {
-    console.log("filter:", filterKeys);
-  }, [filterKeys]);
+    // console.log("filter:", filterKeys);
+    // console.log("loadStatus:", loadStatus);
+  }, [filterKeys, loadStatus]);
 
   return (
     <section aria-label="Search Results">
       {error && <p>{error}</p>}
-      {results && results.count === 0 && (
-        <p>
-          Keine Ergebnisse für den Suchbegriff{" "}
-          <span>"{searchTerm}" gefunden.</span>
-        </p>
+      {data && data.count === 0 && !loadStatus && (
+        <>
+          <h2>Keine Ergebnisse</h2>
+          <p>
+            {" "}
+            ... für den Suchbegriff <span>"{searchTerm}" gefunden.</span>
+          </p>
+        </>
       )}
-      {results && results.count > 0 && (
+
+      {data && data.count > 0 && (
         <>
           <h2 className="text-2xl">Such-Resultate</h2>
-          <section aria-label="Search Settings">
+
+          <section
+            aria-label="Search Settings"
+            className="text-sm bg-slate-200"
+          >
             <ViewSwitch />
             <ColumnFilterList
               selectedKeys={filterKeys}
@@ -72,70 +88,89 @@ export default function SearchResultTable({
               onSelectionChange={handleMaxResultsChange}
             />
           </section>
+
           <section aria-label="Search Results Summary">
             <p>
-              Es wurden <span>{results.count}</span> Zitate in{" "}
+              Es wurden <span>{data.count}</span> Zitate in{" "}
               <span>{loadTime}s</span> für den Suchbegriff "
               <span>{searchTerm}</span>" gefunden.{" "}
             </p>
             <p>Filter: {filterKeys && [...filterKeys].join(", ")}</p>
             <p>Max Num: {pageMaxResults}</p>
+            <p>Current Page: {currentPage}</p>
           </section>
-          <div>
-            <table>
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Zitat</th>
-                  <th>Stichwörter</th>
-                  {filterKeys.includes("authors") && <th>Autor(en)</th>}
-                  {filterKeys.includes("title") && <th>Titel</th>}
-                  {filterKeys.includes("start_date") && (
-                    <th>Früheste mögl. Datierung</th>
-                  )}
-                  {filterKeys.includes("end_date") && (
-                    <th>Spätest mögl. Datierung</th>
-                  )}
-                  {/* <th>Summary</th> */}
-                </tr>
-              </thead>
-              <tbody>
-                {results.results.map((item, i: number) => (
-                  <tr key={item.id}>
-                    <td>{i + 1}</td>
-                    {item.display_label && <td>{item.display_label}</td>}
-                    {item.key_word && (
-                      <td>
-                        {item.key_word
-                          .map((keyword) => keyword.stichwort)
-                          .join(", ")}
-                      </td>
+
+          <section aria-label="pagination" className="bg-slate-400">
+            Pagination:
+            <Pagination
+              totalCount={data.count}
+              pageSize={pageMaxResults}
+              onPageChange={handlePageChange}
+              siblingCount={1}
+              currentPage={currentPage}
+            />
+          </section>
+
+          {!loadStatus && (
+            <section aria-label="result table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Zitat</th>
+                    <th>Stichwörter</th>
+                    {filterKeys.includes("authors") && <th>Autor(en)</th>}
+                    {filterKeys.includes("title") && <th>Titel</th>}
+                    {filterKeys.includes("start_date") && (
+                      <th>Früheste mögl. Datierung</th>
                     )}
-                    {item.text?.autor && filterKeys.includes("authors") && (
-                      <td>
-                        {item.text.autor.map((autor) => autor.name).join(", ")}
-                      </td>
+                    {filterKeys.includes("end_date") && (
+                      <th>Spätest mögl. Datierung</th>
                     )}
-                    {item.text?.title && filterKeys.includes("title") && (
-                      <td>
-                        <a href={getPermaLink(item.id)} target="_blank">
-                          {item.text.title}
-                        </a>
-                      </td>
-                    )}
-                    {item.text?.start_date &&
-                      filterKeys.includes("start_date") && (
-                        <td>{item.text.start_date}</td>
-                      )}
-                    {item.text?.end_date && filterKeys.includes("end_date") && (
-                      <td>{item.text.end_date}</td>
-                    )}
-                    {/* <td>{item.summary}</td> */}
+                    {/* <th>Summary</th> */}
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {data.results.map((item, i: number) => (
+                    <tr key={item.id}>
+                      <td>{i + 1 + (currentPage - 1) * pageMaxResults}</td>
+                      {item.display_label && <td>{item.display_label}</td>}
+                      {item.key_word && (
+                        <td>
+                          {item.key_word
+                            .map((keyword) => keyword.stichwort)
+                            .join(", ")}
+                        </td>
+                      )}
+                      {item.text?.autor && filterKeys.includes("authors") && (
+                        <td>
+                          {item.text.autor
+                            .map((autor) => autor.name)
+                            .join(", ")}
+                        </td>
+                      )}
+                      {item.text?.title && filterKeys.includes("title") && (
+                        <td>
+                          <a href={getPermaLink(item.id)} target="_blank">
+                            {item.text.title}
+                          </a>
+                        </td>
+                      )}
+                      {item.text?.start_date &&
+                        filterKeys.includes("start_date") && (
+                          <td>{item.text.start_date}</td>
+                        )}
+                      {item.text?.end_date &&
+                        filterKeys.includes("end_date") && (
+                          <td>{item.text.end_date}</td>
+                        )}
+                      {/* <td>{item.summary}</td> */}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </section>
+          )}
         </>
       )}
     </section>
