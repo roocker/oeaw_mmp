@@ -71,37 +71,35 @@ export default function SearchResultTable({
       {data && data.count > 0 && (
         <>
           <h2 className="text-2xl">Such-Resultate</h2>
-
-          <section
-            aria-label="Search Settings"
-            className="text-sm bg-slate-200"
-          >
-            <ViewSwitch />
-            <ColumnFilterList
-              selectedKeys={filterKeys}
-              onSelectionChange={handleFilterChange}
-              selectionMode="multiple"
-            />
-
-            <ListLength
-              selectedKey={pageMaxResults}
-              onSelectionChange={handleMaxResultsChange}
-            />
+          <p className="text-center">
+            Es wurden <span>{data.count}</span> Zitate in{" "}
+            <span>{loadTime}s</span> für den Suchbegriff "
+            <span>{searchTerm}</span>" gefunden.{" "}
+          </p>
+          <section aria-label="Search Settings">
+            <div className="text-sm flex flex-row justify-center my-4 items-center gap-4">
+              <ViewSwitch />
+              <ListLength
+                selectedKey={pageMaxResults}
+                onSelectionChange={handleMaxResultsChange}
+              />
+            </div>
+            <div className="">
+              <ColumnFilterList
+                selectedKeys={filterKeys}
+                onSelectionChange={handleFilterChange}
+                selectionMode="multiple"
+              />
+            </div>
           </section>
 
-          <section aria-label="Search Results Summary">
-            <p>
-              Es wurden <span>{data.count}</span> Zitate in{" "}
-              <span>{loadTime}s</span> für den Suchbegriff "
-              <span>{searchTerm}</span>" gefunden.{" "}
-            </p>
+          {/* <section aria-label="Search Results Summary">
             <p>Filter: {filterKeys && [...filterKeys].join(", ")}</p>
             <p>Max Num: {pageMaxResults}</p>
             <p>Current Page: {currentPage}</p>
-          </section>
+          </section> */}
 
-          <section aria-label="pagination" className="bg-slate-400">
-            Pagination:
+          <section aria-label="pagination" className="flex justify-center my-4">
             <Pagination
               totalCount={data.count}
               pageSize={pageMaxResults}
@@ -113,9 +111,9 @@ export default function SearchResultTable({
 
           {!loadStatus && (
             <section aria-label="result table">
-              <table>
+              <table className="">
                 <thead>
-                  <tr>
+                  <tr className="">
                     <th>#</th>
                     <th>Zitat</th>
                     <th>Stichwörter</th>

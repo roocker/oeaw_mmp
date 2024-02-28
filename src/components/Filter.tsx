@@ -14,7 +14,10 @@ import {
 
 export const ViewSwitch = (args: SwitchProps) => {
   return (
-    <Switch className="group flex gap-2 items-center" {...args}>
+    <Switch
+      className="group flex gap-2 items-center border-r-2 pr-4 border-r-blue"
+      {...args}
+    >
       Listen Ansicht
       <div className="flex h-[26px] w-[44px] shrink-0 cursor-default rounded-full shadow-inner bg-clip-padding border border-solid border-white/30 p-[3px] box-border transition duration-200 ease-in-out bg-cyan group-pressed:bg-cyan group-selected:bg-blue group-selected:group-pressed:bg-blue outline-none group-focus-visible:ring-2 ring-black">
         <span className="h-[18px] w-[18px] transform rounded-full bg-white shadow transition duration-200 ease-in-out translate-x-0 group-selected:translate-x-[100%]" />
@@ -35,9 +38,18 @@ export const ColumnFilterList = (
   ];
   return (
     <>
-      <Label>Filter:</Label>
-      <ListBox aria-label="Column Filter" items={options} {...args}>
-        {(item) => <ListBoxItem>{item.name}</ListBoxItem>}
+      {/* <Label>Filter:</Label> */}
+      <ListBox
+        aria-label="Column Filter"
+        items={options}
+        {...args}
+        className=" flex flex-row justify-center gap-2 whitespace-nowrap "
+      >
+        {(item) => (
+          <ListBoxItem className="py-2 px-4 data-selected:bg-red-600 aria-selected:bg-blue aria-selected:font-bold aria-selected:text-white hover:font-bold hover:bg-cyan rounded-lg border-2">
+            {item.name}
+          </ListBoxItem>
+        )}
       </ListBox>
     </>
   );
@@ -57,13 +69,13 @@ export const ListLength = (
   return (
     <Select {...args}>
       <Label>Maximal Anzahl Ergebnisse pro Seite:</Label>
-      <Button>
+      <Button className="border-2 ml-2 bg-white  rounded-lg p-2 ">
         <SelectValue />
         <span aria-hidden="true">▼</span>
       </Button>
       <Popover>
-        <ListBox aria-label="maximum results per page" items={options}>
-          {(item) => <ListBoxItem>{item.name}</ListBoxItem>}
+        <ListBox aria-label="maximum results per page" items={options} className="bg-white p-2 text-sm text-right border-2 rounded-lg ">
+          {(item) => <ListBoxItem className="hover:bg-cyan hover:text-white p-2 rounded-lg">{item.name}</ListBoxItem>}
         </ListBox>
       </Popover>
     </Select>

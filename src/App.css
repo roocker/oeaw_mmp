@@ -23,6 +23,13 @@
   table {
     @apply gap-4;
   }
+  tr {
+    @apply border-b-2;
+  }
+  td,
+  th {
+    @apply border-r-2 p-2;
+  }
 }
 @tailwind components;
 @tailwind utilities;

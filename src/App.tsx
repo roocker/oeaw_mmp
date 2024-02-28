@@ -5,6 +5,7 @@ import { MMPResult } from "./types";
 import "./App.css";
 
 import "@fontsource/lato";
+import Loading from "./components/Loading";
 
 interface SearchResults {
   count: number;
@@ -106,7 +107,7 @@ function App() {
 
   return (
     <main className="w-full flex justify-center ">
-      <div className=" min-w-100 w-full max-w-screen-xl center bg-gray-50 mt-8 mx-4">
+      <div className=" min-w-100 w-full max-w-screen-xl center mt-8 mx-4">
         <h1 className="line-clamp-1 mb-8 text-center">
           Mapping Medieval Peoples (MMP) - Zitat Suche
         </h1>
@@ -121,7 +122,8 @@ function App() {
           autoComplete="on"
         />
 
-        {loading && <p className="absolute">Suche Zitat...</p>}
+        {loading && <Loading />}
+        {/* {loading && <Loading /> <p className="absolute">Suche Zitat...</p>} */}
 
         <SearchResultTable
           data={results}
