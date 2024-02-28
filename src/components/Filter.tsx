@@ -74,8 +74,54 @@ export const ListLength = (
         <span aria-hidden="true">▼</span>
       </Button>
       <Popover>
-        <ListBox aria-label="maximum results per page" items={options} className="bg-white p-2 text-sm text-right border-2 rounded-lg ">
-          {(item) => <ListBoxItem className="hover:bg-cyan hover:text-white p-2 rounded-lg">{item.name}</ListBoxItem>}
+        <ListBox
+          aria-label="maximum results per page"
+          items={options}
+          className="bg-white p-2 text-sm text-right border-2 rounded-lg "
+        >
+          {(item) => (
+            <ListBoxItem className="hover:bg-cyan hover:text-white p-2 rounded-lg">
+              {item.name}
+            </ListBoxItem>
+          )}
+        </ListBox>
+      </Popover>
+    </Select>
+  );
+};
+
+export const ListSortBy = (
+  args: SelectProps<ListBoxProps<{ id: number; name: string }>>,
+) => {
+  const options = [
+    { id: "relevance", name: "Relevanz" },
+    { id: "display_label", name: "Titel" },
+    { id: "-display_label", name: "Titel (absteigend)" },
+    { id: "key_word", name: "Stichwörter" },
+    { id: "-key_word", name: "Stichwörter (absteigend)" },
+    { id: "start_date", name: "Frühest mögl. Datierung" },
+    { id: "-start_date", name: "Frühest mögl. Datierung (absteigend)" },
+    { id: "end_date", name: "Spätest mögl. Datierung" },
+    { id: "-end_date", name: "Spätest mögl. Datierung (absteigend)" },
+  ];
+  return (
+    <Select {...args}>
+      <Label>Ergebnisse Sortieren nach</Label>
+      <Button className="border-2 ml-2 bg-white  rounded-lg p-2 ">
+        <SelectValue />
+        <span aria-hidden="true">▼</span>
+      </Button>
+      <Popover>
+        <ListBox
+          aria-label="maximum results per page"
+          items={options}
+          className="bg-white p-2 text-sm text-right border-2 rounded-lg "
+        >
+          {(item) => (
+            <ListBoxItem className="hover:bg-cyan hover:text-white p-2 rounded-lg">
+              {item.name}
+            </ListBoxItem>
+          )}
         </ListBox>
       </Popover>
     </Select>

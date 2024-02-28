@@ -1,4 +1,4 @@
-import { ColumnFilterList, ListLength, ViewSwitch } from "./Filter";
+import { ColumnFilterList, ListLength, ListSortBy, ViewSwitch } from "./Filter";
 import { MMPResult } from "../types";
 import { Key, Selection } from "react-aria-components";
 import { useEffect } from "react";
@@ -13,12 +13,14 @@ interface SearchResultTableProps {
   searchTerm?: string;
   loadStatus: boolean;
   loadTime?: number;
-  filterSelectedKeys: Array<string>;
-  filterSetSelectedKeys: React.Dispatch<React.SetStateAction<Array<string>>>;
+  filterKeys: Array<string>;
+  filterSetKeys: React.Dispatch<React.SetStateAction<Array<string>>>;
   pageMaxResults: number;
   pageSetMaxResults: React.Dispatch<React.SetStateAction<number>>;
   currentPage: number;
   handlePageChange: (page: number | string) => void;
+  pageOrdering: string;
+  pageSetOrdering: (ordering: string) => void;
 }
 
 export default function SearchResultTable({
@@ -27,18 +29,24 @@ export default function SearchResultTable({
   searchTerm,
   loadStatus,
   loadTime,
-  filterSelectedKeys: filterKeys,
-  filterSetSelectedKeys,
+  filterKeys,
+  filterSetKeys,
   pageMaxResults,
   pageSetMaxResults,
   currentPage,
   handlePageChange,
+  pageOrdering,
+  pageSetOrdering,
 }: SearchResultTableProps) {
   const handleFilterChange = (sel: Selection) => {
     filterSetSelectedKeys(Array.from(sel as string));
   };
   const handleMaxResultsChange = (key: Key) => {
     pageSetMaxResults(key as number);
+  };
+
+  const handleOrderingChange = (key: Key) => {
+    pageSetOrdering(key as string);
   };
   const getPermaLink = (id: number) => {
     return `https://mmp.acdh-dev.oeaw.ac.at/archiv/stelle/detail/${id}`;
@@ -82,6 +90,10 @@ export default function SearchResultTable({
               <ListLength
                 selectedKey={pageMaxResults}
                 onSelectionChange={handleMaxResultsChange}
+              />
+              <ListSortBy
+                selectedKey={pageOrdering}
+                onSelectionChange={handleOrderingChange}
               />
             </div>
             <div className="">
@@ -154,14 +166,15 @@ export default function SearchResultTable({
                           </a>
                         </td>
                       )}
-                      {item.text?.start_date &&
-                        filterKeys.includes("start_date") && (
-                          <td>{item.text.start_date}</td>
-                        )}
-                      {item.text?.end_date &&
-                        filterKeys.includes("end_date") && (
-                          <td>{item.text.end_date}</td>
-                        )}
+                      {/* beim sortieren nicht wirklich sortiert: // text?.start_date */}
+                      {item.start_date && filterKeys.includes("start_date") && (
+                        <td>{item.start_date}</td>
+                      )}
+
+                      {/* beim sortieren nicht wirklich sortiert: // text?.end_date */}
+                      {item.end_date && filterKeys.includes("end_date") && (
+                        <td>{item.end_date}</td>
+                      )}
                       {/* <td>{item.summary}</td> */}
                     </tr>
                   ))}

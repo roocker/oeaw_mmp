@@ -27,14 +27,22 @@ function App() {
   const [currentPage, setCurrentPage] = useState(1);
   const [offset, setOffset] = useState(0);
   //filter
-  const [selected, setSelected] = useState(["title"]);
+  const [selected, setSelected] = useState([
+    "title",
+    "authors",
+    "start_date",
+    "end_date",
+  ]);
   const [maxResults, setMaxResults] = useState(20);
+  //sort
+  const [ordering, setOrdering] = useState<string>("relevance");
 
   useEffect(() => {
     const handleSearch = async (
       searchTerm: string,
       maxResults: number,
       offset: number,
+      ordering: string,
     ) => {
       console.log(
         "handleSearch got triggered:",
@@ -46,12 +54,14 @@ function App() {
         offset,
         "currentPage:",
         currentPage,
+        "ordering:",
+        ordering,
       );
       try {
         setLoading(true);
         const startTime = new Date().getTime();
         const response = await fetch(
-          `https://mmp.acdh-dev.oeaw.ac.at/api/stelle/?zitat=${searchTerm}&limit=${maxResults}&offset=${offset}&zitat_lookup=icontains`,
+          `https://mmp.acdh-dev.oeaw.ac.at/api/stelle/?zitat=${searchTerm}&limit=${maxResults}&offset=${offset}&ordering=${ordering}&zitat_lookup=icontains`,
           // ordering = zitat
           // ordering = -zitat
         );
@@ -76,11 +86,14 @@ function App() {
         setLoading(false);
       }
     };
+    if (ordering === "relevance") {
+      console.log("sort by relevance!");
+    }
 
     if (searchTerm !== "") {
-      handleSearch(searchTerm, maxResults, offset);
+      handleSearch(searchTerm, maxResults, offset, ordering);
     }
-  }, [currentPage, maxResults, offset, searchTerm]);
+  }, [currentPage, maxResults, offset, searchTerm, ordering]);
 
   if (lastsearchTerm !== searchTerm) {
     console.log("new search, resetting");
@@ -131,10 +144,12 @@ function App() {
           searchTerm={searchTerm}
           loadStatus={loading}
           loadTime={loadTime}
-          filterSelectedKeys={selected}
-          filterSetSelectedKeys={setSelected}
+          filterKeys={selected}
+          filterSetKeys={setSelected}
           pageMaxResults={maxResults}
           pageSetMaxResults={setMaxResults}
+          pageOrdering={ordering}
+          pageSetOrdering={setOrdering}
           currentPage={currentPage}
           // currentOffset={offset}
           handlePageChange={handlePageChange}
