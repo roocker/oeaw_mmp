@@ -1,7 +1,7 @@
 import { ColumnFilterList, ListLength, ListSortBy, ViewSwitch } from "./Filter";
 import { MMPResult } from "../types";
 import { Key, Selection } from "react-aria-components";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Pagination from "./Pagination";
 
 interface SearchResultTableProps {
@@ -38,8 +38,9 @@ export default function SearchResultTable({
   pageOrdering,
   pageSetOrdering,
 }: SearchResultTableProps) {
+  const [view_switch, setViewSwitch] = useState(false);
   const handleFilterChange = (sel: Selection) => {
-    filterSetSelectedKeys(Array.from(sel as string));
+    filterSetKeys(Array.from(sel as string));
   };
   const handleMaxResultsChange = (key: Key) => {
     pageSetMaxResults(key as number);
@@ -52,16 +53,9 @@ export default function SearchResultTable({
     return `https://mmp.acdh-dev.oeaw.ac.at/archiv/stelle/detail/${id}`;
   };
 
-  /* const data = useMemo(() => {
-    const firstPageIndex = (currentPage - 1) * pageMaxResults;
-    const lastPageIndex = firstPageIndex + pageMaxResults;
-    return results.slice(firstPageIndex, lastPageIndex);
-  }, [currentPage, results]); */
-
-  useEffect(() => {
-    // console.log("filter:", filterKeys);
-    // console.log("loadStatus:", loadStatus);
-  }, [filterKeys, loadStatus]);
+  /* if (data) {
+    console.log("displaying this data:", data);
+  } */
 
   return (
     <section aria-label="Search Results">
@@ -69,9 +63,10 @@ export default function SearchResultTable({
       {data && data.count === 0 && !loadStatus && (
         <>
           <h2>Keine Ergebnisse</h2>
-          <p>
-            {" "}
-            ... für den Suchbegriff <span>"{searchTerm}" gefunden.</span>
+          <p className="text-center">
+            ... für den Suchbegriff "
+            <span className="italic font-bold mx-1">{searchTerm}</span>"
+            gefunden.
           </p>
         </>
       )}
@@ -81,12 +76,13 @@ export default function SearchResultTable({
           <h2 className="text-2xl">Such-Resultate</h2>
           <p className="text-center">
             Es wurden <span>{data.count}</span> Zitate in{" "}
-            <span>{loadTime}s</span> für den Suchbegriff "
-            <span>{searchTerm}</span>" gefunden.{" "}
+            <span>{loadTime}s</span> für den Suchbegriff
+            <span className="italic font-bold mx-1">{searchTerm}</span>{" "}
+            gefunden.
           </p>
           <section aria-label="Search Settings">
             <div className="text-sm flex flex-row justify-center my-4 items-center gap-4">
-              <ViewSwitch />
+              <ViewSwitch onChange={setViewSwitch} />
               <ListLength
                 selectedKey={pageMaxResults}
                 onSelectionChange={handleMaxResultsChange}
@@ -96,20 +92,16 @@ export default function SearchResultTable({
                 onSelectionChange={handleOrderingChange}
               />
             </div>
-            <div className="">
-              <ColumnFilterList
-                selectedKeys={filterKeys}
-                onSelectionChange={handleFilterChange}
-                selectionMode="multiple"
-              />
-            </div>
+            {!view_switch && (
+              <div>
+                <ColumnFilterList
+                  selectedKeys={filterKeys}
+                  onSelectionChange={handleFilterChange}
+                  selectionMode="multiple"
+                />
+              </div>
+            )}
           </section>
-
-          {/* <section aria-label="Search Results Summary">
-            <p>Filter: {filterKeys && [...filterKeys].join(", ")}</p>
-            <p>Max Num: {pageMaxResults}</p>
-            <p>Current Page: {currentPage}</p>
-          </section> */}
 
           <section aria-label="pagination" className="flex justify-center my-4">
             <Pagination
@@ -121,12 +113,36 @@ export default function SearchResultTable({
             />
           </section>
 
-          {!loadStatus && (
+          {!loadStatus && view_switch && (
+            <section aria-label="result list">
+              <ol className="list-decimal">
+                {data.results.map((item) => (
+                  <li>
+                    <dl>
+                      <dt className="float-left font-bold mr-2">Zitat:</dt>
+                      <dd>{item.display_label}</dd>
+                      <dt className="float-left font-bold mr-2">
+                        Stichwörter:
+                      </dt>
+                      <dd>
+                        {item.key_word
+                          .map((keyword) => keyword.stichwort)
+                          .join(", ")}
+                      </dd>
+                    </dl>
+                  </li>
+                ))}
+              </ol>
+            </section>
+          )}
+
+          {!loadStatus && !view_switch && (
             <section aria-label="result table">
               <table className="">
-                <thead>
+                <thead className="uppercase">
                   <tr className="">
                     <th>#</th>
+                    {filterKeys.includes("id") && <th>ID</th>}
                     <th>Zitat</th>
                     <th>Stichwörter</th>
                     {filterKeys.includes("authors") && <th>Autor(en)</th>}
@@ -144,6 +160,9 @@ export default function SearchResultTable({
                   {data.results.map((item, i: number) => (
                     <tr key={item.id}>
                       <td>{i + 1 + (currentPage - 1) * pageMaxResults}</td>
+                      {item.id && filterKeys.includes("id") && (
+                        <td>{item.id}</td>
+                      )}
                       {item.display_label && <td>{item.display_label}</td>}
                       {item.key_word && (
                         <td>

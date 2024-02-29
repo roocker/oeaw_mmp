@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import SearchBar from "./components/SearchBar";
 import SearchResultTable from "./components/SearchResultTable";
 import { MMPResult } from "./types";
+import { sortByRelevance } from "./sortByRelevance";
 import "./App.css";
 
 import "@fontsource/lato";
 import Loading from "./components/Loading";
 
-interface SearchResults {
+export interface SearchResults {
   count: number;
   next: string;
   previous: string;
@@ -28,6 +29,7 @@ function App() {
   const [offset, setOffset] = useState(0);
   //filter
   const [selected, setSelected] = useState([
+    "id",
     "title",
     "authors",
     "start_date",
@@ -35,7 +37,7 @@ function App() {
   ]);
   const [maxResults, setMaxResults] = useState(20);
   //sort
-  const [ordering, setOrdering] = useState<string>("relevance");
+  const [ordering, setOrdering] = useState<string>("");
 
   useEffect(() => {
     const handleSearch = async (
@@ -45,7 +47,7 @@ function App() {
       ordering: string,
     ) => {
       console.log(
-        "handleSearch got triggered:",
+        "requesting from MMP-API:\n",
         "searchTerm:",
         searchTerm,
         "maxResults:",
@@ -62,8 +64,6 @@ function App() {
         const startTime = new Date().getTime();
         const response = await fetch(
           `https://mmp.acdh-dev.oeaw.ac.at/api/stelle/?zitat=${searchTerm}&limit=${maxResults}&offset=${offset}&ordering=${ordering}&zitat_lookup=icontains`,
-          // ordering = zitat
-          // ordering = -zitat
         );
         const endTime = new Date().getTime();
         const timeDiff = (endTime - startTime) / 1000;
@@ -74,9 +74,17 @@ function App() {
         }
 
         const data = await response.json();
-        console.log("recieved data:", data);
+        console.log("recieved data from MMP-API:", data);
 
-        setResults(data);
+        if (ordering === "relevance") {
+          const sortedResults = sortByRelevance(data, searchTerm);
+          setResults({ ...data!, results: sortedResults! });
+        } else if (ordering === "-relevance") {
+          const sortedResults = sortByRelevance(data, searchTerm, "asc");
+          setResults({ ...data!, results: sortedResults! });
+        } else {
+          setResults(data);
+        }
       } catch (error) {
         console.error("Error from MMP-Server:", error);
         setError(
@@ -86,17 +94,15 @@ function App() {
         setLoading(false);
       }
     };
-    if (ordering === "relevance") {
-      console.log("sort by relevance!");
-    }
 
     if (searchTerm !== "") {
       handleSearch(searchTerm, maxResults, offset, ordering);
     }
   }, [currentPage, maxResults, offset, searchTerm, ordering]);
 
+  useEffect(() => {}, [results, searchTerm, ordering]);
+
   if (lastsearchTerm !== searchTerm) {
-    console.log("new search, resetting");
     setCurrentPage(1);
     setOffset(0);
     setLastSearchTerm(searchTerm);
@@ -136,7 +142,6 @@ function App() {
         />
 
         {loading && <Loading />}
-        {/* {loading && <Loading /> <p className="absolute">Suche Zitat...</p>} */}
 
         <SearchResultTable
           data={results}

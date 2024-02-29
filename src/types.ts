@@ -1,4 +1,5 @@
 export interface MMPResult {
+  [key: string]: any;
   id: number;
   summary: string;
   zitat: string;
