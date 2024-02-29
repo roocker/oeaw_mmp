@@ -1,5 +1,4 @@
-import { usePagination, DOTS, usePaginationProps } from "../usePagination";
-import "../styles/pagination.css";
+import { usePagination, usePaginationProps } from "../usePagination";
 
 interface PaginationProps extends usePaginationProps {
   onPageChange: (page: number) => void;
@@ -34,33 +33,34 @@ export default function Pagination({
   };
 
   return (
-    <ul className={"pagination-container"}>
-      {/* Left navigation arrow */}
+    <ul className="flex">
+      {/* left  arrow */}
       <li className="pagination-item" onClick={onPrevious}>
         <div className="arrow left" />
       </li>
-      {paginationRange?.map((pageNumber: number | string, i) => {
-        // If the pageItem is a DOT, render the DOTS unicode character
-        if (pageNumber === DOTS) {
+
+      {paginationRange?.map((pageNumber: string | number, i) => {
+        if (typeof pageNumber === "string") {
           return (
-            <li key={`arrow ${i}`} className="pagination-item dots">
+            <li key={`arrow ${i}`} className="pagination-item dots ">
               &#8230;
             </li>
           );
+        } else {
+          return (
+            <li
+              key={pageNumber}
+              className={`${
+                pageNumber === currentPage ? "selected" : ""
+              } pagination-item`}
+              onClick={() => onPageChange(pageNumber)}
+            >
+              {pageNumber}
+            </li>
+          );
         }
-
-        // Render our Page Pills
-        return (
-          <li
-            key={pageNumber}
-            className="pagination-item"
-            onClick={() => onPageChange(pageNumber)}
-          >
-            {pageNumber}
-          </li>
-        );
       })}
-      {/*  Right Navigation arrow */}
+      {/*  right arrow */}
       <li className="pagination-item" onClick={onNext}>
         <div className="arrow right" />
       </li>

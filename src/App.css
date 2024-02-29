@@ -30,6 +30,24 @@
   th {
     @apply border-r-2 p-2;
   }
+  .pagination-item {
+    @apply py-3 h-8 text-center mx-auto my-1 text-blue flex box-border justify-center items-center tracking-wider rounded-md leading-5 text-sm min-w-8 hover:bg-cyan hover:text-white hover:cursor-pointer;
+  }
+  .arrow {
+    @apply before:relative before:inline-block before:w-2 before:h-2 before:border-r-2 before:border-t-2 before:border-blue hover:before:border-white;
+  }
+  .left {
+    @apply before:-rotate-[135deg] before:translate-x-1/2;
+  }
+  .right {
+    @apply before:rotate-45;
+  }
+  .dots {
+    @apply hover:bg-transparent hover:cursor-default hover:text-blue;
+  }
+  .selected {
+    @apply font-bold text-white bg-blue;
+  }
 }
 @tailwind components;
 @tailwind utilities;
