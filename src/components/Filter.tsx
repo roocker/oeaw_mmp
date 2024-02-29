@@ -18,11 +18,11 @@ export const ViewSwitch = (args: SwitchProps) => {
       className="group flex gap-2 items-center border-r-2 pr-4 border-r-blue"
       {...args}
     >
-      Listen Ansicht
+      Tabellen Ansicht
       <div className="flex h-[26px] w-[44px] shrink-0 cursor-default rounded-full shadow-inner bg-clip-padding border border-solid border-white/30 p-[3px] box-border transition duration-200 ease-in-out bg-cyan group-pressed:bg-cyan group-selected:bg-blue group-selected:group-pressed:bg-blue outline-none group-focus-visible:ring-2 ring-black">
         <span className="h-[18px] w-[18px] transform rounded-full bg-white shadow transition duration-200 ease-in-out translate-x-0 group-selected:translate-x-[100%]" />
       </div>
-      Tabellen Ansicht
+      Listen Ansicht
     </Switch>
   );
 };
@@ -31,10 +31,11 @@ export const ColumnFilterList = (
   args: ListBoxProps<{ id: string; name: string }>,
 ) => {
   const options = [
+    { id: "id", name: "Database ID" },
     { id: "authors", name: "Autoren" },
     { id: "title", name: "Titel" },
-    { id: "start_date", name: "früheste mögliche Datierung" },
-    { id: "end_date", name: "spätest mögliche Datierung" },
+    { id: "start_date", name: "früh. mögl. Datierung" },
+    { id: "end_date", name: "spät. mögl. Datierung" },
   ];
   return (
     <>
@@ -67,7 +68,10 @@ export const ListLength = (
     { id: 500, name: "500" },
   ];
   return (
-    <Select {...args}>
+    <Select
+      {...args}
+      className="border-r-2 pr-4 border-r-blue items-center flex"
+    >
       <Label>Maximal Anzahl Ergebnisse pro Seite:</Label>
       <Button className="border-2 ml-2 bg-white  rounded-lg p-2 ">
         <SelectValue />
@@ -95,17 +99,19 @@ export const ListSortBy = (
 ) => {
   const options = [
     { id: "relevance", name: "Relevanz" },
+    { id: "-relevance", name: "Relevanz (absteigend)" },
     { id: "display_label", name: "Titel" },
     { id: "-display_label", name: "Titel (absteigend)" },
-    { id: "key_word", name: "Stichwörter" },
-    { id: "-key_word", name: "Stichwörter (absteigend)" },
+    // {ordering by key_words yields duplicate items!? https://mmp.acdh-dev.oeaw.ac.at/api/stelle/?limit=20&offset=0&ordering=-key_word&zitat=gentis&zitat_lookup=icontains ==> ids: 2041, 2144, 2251 dup}
+    // { id: "key_word", name: "Stichwörter" },
+    // { id: "-key_word", name: "Stichwörter (absteigend)" },
     { id: "start_date", name: "Frühest mögl. Datierung" },
     { id: "-start_date", name: "Frühest mögl. Datierung (absteigend)" },
     { id: "end_date", name: "Spätest mögl. Datierung" },
     { id: "-end_date", name: "Spätest mögl. Datierung (absteigend)" },
   ];
   return (
-    <Select {...args}>
+    <Select {...args} className="flex items-center">
       <Label>Ergebnisse Sortieren nach</Label>
       <Button className="border-2 ml-2 bg-white  rounded-lg p-2 ">
         <SelectValue />
