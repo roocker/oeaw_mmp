@@ -1,7 +1,7 @@
 import { ColumnFilterList, ListLength, ListSortBy, ViewSwitch } from "./Filter";
 import { MMPResult } from "../types";
 import { Key, Selection } from "react-aria-components";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Pagination from "./Pagination";
 
 interface SearchResultTableProps {
@@ -52,10 +52,6 @@ export default function SearchResultTable({
   const getPermaLink = (id: number) => {
     return `https://mmp.acdh-dev.oeaw.ac.at/archiv/stelle/detail/${id}`;
   };
-
-  /* if (data) {
-    console.log("displaying this data:", data);
-  } */
 
   return (
     <section aria-label="Search Results">

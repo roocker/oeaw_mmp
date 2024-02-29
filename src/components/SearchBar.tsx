@@ -1,5 +1,5 @@
 import type { SearchFieldProps, ValidationResult } from "react-aria-components";
-import { SearchField, Label, Input, Form, Text } from "react-aria-components";
+import { SearchField, Label, Input, Form } from "react-aria-components";
 
 /* const args = {
   isRequired: true

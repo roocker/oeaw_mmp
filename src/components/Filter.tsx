@@ -39,7 +39,6 @@ export const ColumnFilterList = (
   ];
   return (
     <>
-      {/* <Label>Filter:</Label> */}
       <ListBox
         aria-label="Column Filter"
         items={options}
