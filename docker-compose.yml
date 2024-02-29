@@ -1,0 +1,9 @@
+version: "3.9"
+services:
+  website:
+    restart: always
+    image: image.oeaw_mmp.dev
+    container_name: container.oeaw_mmp.dev
+    build: .
+    ports:
+      - "5178:5178"
